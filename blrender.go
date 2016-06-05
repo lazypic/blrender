@@ -25,6 +25,10 @@ func main() {
 		log.Fatal(err)
 	}
 	osx := "/Applications/Blender/blender.app/Contents/MacOS/blender"
+	if len(os.Args) == 1 {
+		fmt.Println("사용법 :\n $ blrender <blender filename>")
+		os.Exit(1)
+	}
 
 	if _, err := os.Stat(osx); err == nil {
 		bfile := cwdpath + "/" + os.Args[1]
