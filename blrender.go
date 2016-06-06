@@ -9,11 +9,10 @@ import (
 	"fmt"
 	)
 func path2renderpath(path string) string {
-	//test.blend -> ./test/test.####.exr"
 	_, file := filepath.Split(path)
 	ext := filepath.Ext(file)
 	if ext != ".blend" {
-		fmt.Println("블랜더파일이 아닙니다.")
+		fmt.Println("no blender file")
 		os.Exit(1)
 	}
 	filename := strings.Split(file, ext)[0]
@@ -26,7 +25,7 @@ func main() {
 	}
 	osx := "/Applications/Blender/blender.app/Contents/MacOS/blender"
 	if len(os.Args) == 1 {
-		fmt.Println("사용법 :\n $ blrender <blender filename>")
+		fmt.Println("How to use :\n $ blrender <blender filename>")
 		os.Exit(1)
 	}
 
