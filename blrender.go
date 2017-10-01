@@ -1,39 +1,47 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"log"
 	"strings"
-	"fmt"
-	)
-func path2renderpath(path string) string {
-	_, file := filepath.Split(path)
-	ext := filepath.Ext(file)
+)
+
+const (
+	MAC = "/Applications/Blender/blender.app/Contents/MacOS/blender"
+)
+
+func renderPath(blenderPath string) string {
+	ext := filepath.Ext(blenderPath)
 	if ext != ".blend" {
-		fmt.Println("no blender file")
+		fmt.Fprintln(os.Stderr, "no blender file")
 		os.Exit(1)
 	}
-	filename := strings.Split(file, ext)[0]
+	filename := filepath.Base(blenderPath)
+	filename := filename[:len(filename)-len(ext)]
 	return fmt.Sprintf("./%s/%s.####.exr", filename, filename)
 }
+
 func main() {
 	cwdpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
 	}
-	osx := "/Applications/Blender/blender.app/Contents/MacOS/blender"
-	if len(os.Args) == 1 {
+	if len(os.Args) != 2 {
 		fmt.Println("How to use :\n $ blrender <blender filename>")
 		os.Exit(1)
 	}
 
-	if _, err := os.Stat(osx); err == nil {
-		bfile := cwdpath + "/" + os.Args[1]
-		cmd := exec.Command(osx, "-b", bfile, "-o", path2renderpath(bfile), "-F", "EXR", "-a")
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		cmd.Run()
+	_, err := os.Stat(MAC)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "블렌더설치가 필요함.")
+		os.Exit(1)
 	}
+	bfile := cwdpath + "/" + os.Args[1]
+	cmd := exec.Command(MAC, "-b", bfile, "-o", renderPath(blenderPath), "-F", "EXR", "-a")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
