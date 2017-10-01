@@ -9,15 +9,16 @@ import (
 )
 const (
 	MAC = "/Applications/Blender/blender.app/Contents/MacOS/blender"
-	//LIN = ""
-	//WIN
+	//LIN = "" // Needs discussion.
+	//WIN = "" // Needs discussion.
 )
 
-// renderPath 함수는 블랜더파일을 받아서 렌더링에 필요한 렌더경로를 반환한다.
+// renderPath function receives the Blender filepath and
+// returns the relative path required for rendering.
 func renderPath(blenderPath string) string {
 	ext := filepath.Ext(blenderPath)
 	if ext != ".blend" {
-		fmt.Fprintln(os.Stderr, "no blender file")
+		fmt.Fprintln(os.Stderr, "not blender file type.")
 		os.Exit(1)
 	}
 	filename := filepath.Base(blenderPath)
@@ -28,13 +29,13 @@ func renderPath(blenderPath string) string {
 func main() {
 	_, err := os.Stat(MAC)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s 위치에 blender가 없습니다.\n", MAC)
-		fmt.Fprintln(os.Stderr, "블렌더설치가 필요합니다.")
+		fmt.Fprintf(os.Stderr, "No Blender App at %s.\n", MAC)
+		fmt.Fprintln(os.Stderr, "Need Install : https://www.blender.org/download/")
 		os.Exit(1)
 	}
 	if len(os.Args) != 2 {
 		fmt.Println("How to use :")
-		fmt.Println("$ blrender <blender filename>")
+		fmt.Println(" $ blrender <renderfile.blend>")
 		os.Exit(1)
 	}
 	cwdpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -42,7 +43,7 @@ func main() {
 		log.Fatal(err)
 	}
 	blenderPath := cwdpath + "/" + filepath.Base(os.Args[1])
-	// blender파일에서 설정된 프레임값으로 exr렌더링 한다.
+	// render
 	cmd := exec.Command(MAC, "-b", blenderPath, "-o", renderPath(blenderPath), "-F", "EXR", "-a")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
