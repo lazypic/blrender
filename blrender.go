@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -39,13 +38,14 @@ func main() {
 		fmt.Println(" $ blrender <renderfile.blend>")
 		os.Exit(1)
 	}
-	cwdpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Fatal(err)
-	}
 	// check path Absolute or Relative
 	blenderPath := os.Args[1]
 	if os.Args[1] == filepath.Base(os.Args[1]) {
+		cwdpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 		blenderPath = cwdpath + "/" + filepath.Base(os.Args[1])
 	}
 	_, err = os.Stat(blenderPath)
