@@ -15,4 +15,6 @@ go get github.com/lazypic/blrender
 $ blrender render.blend
 $ blrender /file/location/render.blend
 $ blrender ~/test/render.blend
+$ blrender ../render.blend
+$ blrender .././render.blend
 ```
