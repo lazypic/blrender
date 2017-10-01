@@ -12,6 +12,7 @@ go get github.com/lazypic/blrender
 - 터미널에서 렌더링할 블랜더파일을 blrender 명령어 뒤에 붙혀준다.
 
 ```
-$ blrender render01.blend
-$ blrender /file/location/render01.blend
+$ blrender render.blend
+$ blrender /file/location/render.blend
+$ blrender ~/test/render.blend
 ```

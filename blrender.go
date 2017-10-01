@@ -16,6 +16,7 @@ const (
 // renderPath function receives the Blender filepath and
 // returns the relative path required for rendering.
 func renderPath(blenderPath string) string {
+	dir := filepath.Dir(blenderPath)
 	ext := filepath.Ext(blenderPath)
 	if ext != ".blend" {
 		fmt.Fprintln(os.Stderr, "not blender file type.")
@@ -23,7 +24,7 @@ func renderPath(blenderPath string) string {
 	}
 	filename := filepath.Base(blenderPath)
 	filename = filename[:len(filename)-len(ext)]
-	return fmt.Sprintf("./%s/%s.####.exr", filename, filename)
+	return fmt.Sprintf("%s/%s/%s.####.exr", dir, filename, filename)
 }
 
 func main() {
@@ -42,7 +43,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	blenderPath := cwdpath + "/" + filepath.Base(os.Args[1])
+	// check path Absolute or Relative
+	blenderPath := os.Args[1]
+	if os.Args[1] == filepath.Base(os.Args[1]) {
+		blenderPath = cwdpath + "/" + filepath.Base(os.Args[1])
+	}
+	_, err = os.Stat(blenderPath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "blender file does not exist.")
+		os.Exit(1)
+	}
 	// render
 	cmd := exec.Command(MAC, "-b", blenderPath, "-o", renderPath(blenderPath), "-F", "EXR", "-a")
 	cmd.Stdout = os.Stdout
